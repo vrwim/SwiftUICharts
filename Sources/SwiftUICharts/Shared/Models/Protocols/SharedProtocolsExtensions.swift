@@ -161,7 +161,7 @@ extension CTSingleDataSetProtocol where Self.DataPoint: CTStandardDataPointProto
      - Returns: Highest value in data set.
      */
     public func maxValue() -> Double  {
-        return self.dataPoints.max { $0.value < $1.value }?.value ?? 0
+        return self.dataPoints.max { $0.value ?? -Double.infinity < $1.value ?? -Double.infinity }?.value ?? 0
     }
     
     /**
@@ -171,18 +171,18 @@ extension CTSingleDataSetProtocol where Self.DataPoint: CTStandardDataPointProto
      - Returns: Lowest value in data set.
      */
     public func minValue() -> Double  {
-        return self.dataPoints.min { $0.value < $1.value }?.value ?? 0
+        return self.dataPoints.min { $0.value ?? Double.infinity < $1.value ?? Double.infinity }?.value ?? 0
     }
     
     /**
      Returns the average value from the data set.
      
      - Parameter dataSet: Target data set.
-     - Returns: Average of values in data set.
+     - Returns: Average of non-nil values in data set.
      */
     public func average() -> Double {
-        let sum = self.dataPoints.reduce(0) { $0 + $1.value }
-        return sum / Double(self.dataPoints.count)
+        let sum = self.dataPoints.reduce(0) { $0 + ($1.value ?? 0) }
+        return sum / Double(self.dataPoints.filter { $0.value != nil }.count)
     }
     
 }
@@ -230,7 +230,7 @@ extension CTMultiDataSetProtocol where Self.DataSet.DataPoint: CTStandardDataPoi
     public func maxValue() -> Double {
         var setHolder : [Double] = []
         for set in self.dataSets {
-            setHolder.append(set.dataPoints.max { $0.value < $1.value }?.value ?? 0)
+            setHolder.append(set.dataPoints.max { ($0.value ?? -Double.infinity) < ($1.value ?? -Double.infinity) }?.value ?? 0)
         }
         return setHolder.max { $0 < $1 } ?? 0
     }
@@ -244,7 +244,7 @@ extension CTMultiDataSetProtocol where Self.DataSet.DataPoint: CTStandardDataPoi
     public func minValue() -> Double {
         var setHolder : [Double] = []
         for set in dataSets {
-            setHolder.append(set.dataPoints.min { $0.value < $1.value }?.value ?? 0)
+            setHolder.append(set.dataPoints.min { ($0.value ?? Double.infinity) < ($1.value ?? Double.infinity) }?.value ?? 0)
         }
         return setHolder.min { $0 < $1 } ?? 0
     }
@@ -258,8 +258,8 @@ extension CTMultiDataSetProtocol where Self.DataSet.DataPoint: CTStandardDataPoi
     public func average() -> Double {
         var setHolder : [Double] = []
         for set in dataSets {
-            let sum = set.dataPoints.reduce(0) { $0 + $1.value }
-            setHolder.append(sum / Double(set.dataPoints.count))
+            let sum = set.dataPoints.reduce(0) { $0 + ($1.value ?? 0) }
+            setHolder.append(sum / Double(set.dataPoints.filter { $0.value != nil }.count))
         }
         let sum = setHolder.reduce(0) { $0 + $1 }
         return sum / Double(setHolder.count)
@@ -278,10 +278,10 @@ extension CTSingleDataSetProtocol where Self.DataPoint: CTStandardDataPointProto
      */
     public func minValue() -> Double  {
         if !self.style.ignoreZero {
-            return self.dataPoints.min { $0.value < $1.value }?.value ?? 0
+            return self.dataPoints.min { ($0.value ?? Double.infinity) < ($1.value ?? Double.infinity) }?.value ?? 0
         } else {
             let noZero = self.dataPoints.filter({ $0.value != 0 })
-            return noZero.min { $0.value < $1.value }?.value ?? 0
+            return noZero.min { ($0.value ?? Double.infinity) < ($1.value ?? Double.infinity) }?.value ?? 0
         }
     }
 }
@@ -305,8 +305,8 @@ extension CTDataPointBaseProtocol {
 extension CTStandardDataPointProtocol {
     /// Data point's value as a string
     public func valueAsString(specifier: String) -> String {
-        if self.value != -Double.greatestFiniteMagnitude {
-           return String(format: specifier, self.value)
+        if let value = self.value, value != -Double.greatestFiniteMagnitude {
+           return String(format: specifier, value)
         } else {
             return String("")
         }

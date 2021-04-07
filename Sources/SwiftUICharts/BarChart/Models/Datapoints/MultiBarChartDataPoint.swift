@@ -21,7 +21,7 @@ import SwiftUI
 public struct MultiBarChartDataPoint: CTMultiBarDataPoint {
     
     public let id          : UUID = UUID()
-    public var value       : Double
+    public var value       : Double?
     public var xAxisLabel  : String? = nil
     public var description : String?
     public var date        : Date?

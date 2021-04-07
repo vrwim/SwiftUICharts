@@ -118,9 +118,9 @@ public final class BarChartData: CTBarChartDataProtocol {
         let xSection : CGFloat = chartSize.width / CGFloat(dataSet.dataPoints.count)
         let ySection : CGFloat = chartSize.height / CGFloat(self.maxValue)
         let index    : Int     = Int((touchLocation.x) / xSection)
-        if index >= 0 && index < dataSet.dataPoints.count {
+        if index >= 0 && index < dataSet.dataPoints.count, let value = dataSet.dataPoints[index].value {
             return CGPoint(x: (CGFloat(index) * xSection) + (xSection / 2),
-                           y: (chartSize.size.height - CGFloat(dataSet.dataPoints[index].value) * ySection))
+                           y: (chartSize.size.height - CGFloat(value) * ySection))
         }
         return nil
     }

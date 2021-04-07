@@ -181,7 +181,7 @@ public final class StackedBarChartData: CTMultiBarChartDataProtocol {
              
              // Get the max value of the dataset relative to max value of all datasets.
              // This is used to set the height of the y axis filtering.
-             let setMaxValue = dataSet.dataPoints.max { $0.value < $1.value }?.value ?? 0
+             let setMaxValue = dataSet.dataPoints.max { ($0.value ?? -Double.infinity) < ($1.value ?? -Double.infinity) }?.value ?? 0
              let allMaxValue = self.maxValue
              let fraction : CGFloat = CGFloat(setMaxValue / allMaxValue)
 

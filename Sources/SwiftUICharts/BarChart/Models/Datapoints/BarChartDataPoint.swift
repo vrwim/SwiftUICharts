@@ -24,7 +24,7 @@ public struct BarChartDataPoint: CTStandardBarDataPoint {
     
     public let id = UUID()
 
-    public var value      : Double
+    public var value      : Double?
     public var xAxisLabel : String?
     public var description: String?
     public var date       : Date?

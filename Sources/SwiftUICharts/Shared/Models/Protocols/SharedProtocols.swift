@@ -225,7 +225,7 @@ public protocol CTStandardDataPointProtocol: CTDataPointBaseProtocol {
     /**
      Value of the data point
      */
-    var value: Double { get set }
+    var value: Double? { get set }
 }
 
 /**

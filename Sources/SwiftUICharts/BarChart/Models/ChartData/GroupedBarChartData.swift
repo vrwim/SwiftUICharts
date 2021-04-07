@@ -179,12 +179,12 @@ public final class GroupedBarChartData: CTMultiBarChartDataProtocol {
             let xSubSection : CGFloat   = (xSection / CGFloat(subDataSet.dataPoints.count))
             let subIndex    : Int       = Int((touchLocation.x - CGFloat(groupSpacing * CGFloat(index))) / xSubSection) - (subDataSet.dataPoints.count * index)
 
-            if subIndex >= 0 && subIndex < subDataSet.dataPoints.count {
+            if subIndex >= 0 && subIndex < subDataSet.dataPoints.count, let value = subDataSet.dataPoints[subIndex].value {
                 let element : CGFloat = (CGFloat(subIndex) * xSubSection) + (xSubSection / 2)
                 let section : CGFloat = (superXSection * CGFloat(superIndex))
                 let spacing : CGFloat = ((groupSpacing / CGFloat(dataSets.dataSets.count)) * CGFloat(superIndex))
                 return CGPoint(x: element + section + spacing,
-                               y: (chartSize.height - CGFloat(subDataSet.dataPoints[subIndex].value) * ySection))
+                               y: (chartSize.height - CGFloat(value) * ySection))
             }
         }
         return nil
